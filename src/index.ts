@@ -4,6 +4,8 @@ dotenv.config();
 import express from 'express';
 import morgan from 'morgan';
 import userRouter from './router/user.router.js';
+var session = require('express-session')
+var cookieParser = require ('cookie-parser');
 
 class Server{
 
@@ -19,6 +21,7 @@ class Server{
     private config(){
         this.app.use(express.json());
         this.app.use(morgan('dev'));
+        this.app.use(cookieParser());
     }
 
     private routes(){
