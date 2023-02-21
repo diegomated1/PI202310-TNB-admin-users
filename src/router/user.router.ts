@@ -12,7 +12,9 @@ class UserRouter {
 
     private config(){
         // GET users/:id_user      TRAE UN USUARIO CON SU ID
+        
         this.router.route('/users/:id_user').get(userController.getById);
+        this.router.route('/auth/login').post(userController.login)
     }
 }
 
