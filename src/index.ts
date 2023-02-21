@@ -23,6 +23,7 @@ class Server{
         this.app.use(express.json());
         this.app.use(cookieParser());
         this.app.use(morgan('dev'));
+        this.app.use(cookieParser());
     }
 
     private routes(){
