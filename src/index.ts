@@ -19,7 +19,10 @@ class Server{
     }
 
     private config(){
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: process.env.CLIENT_HOST! || '*',
+            credentials: true
+        }));
         this.app.use(express.json());
         this.app.use(cookieParser());
         this.app.use(morgan('dev'));
