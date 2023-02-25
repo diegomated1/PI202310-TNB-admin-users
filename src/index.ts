@@ -19,6 +19,7 @@ class Server{
     }
 
     private config(){
+        console.log(process.env.CLIENT_HOST)
         this.app.use(cors({
             origin: process.env.CLIENT_HOST! || '*',
             credentials: true
