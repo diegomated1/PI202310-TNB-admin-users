@@ -4,5 +4,5 @@ export default interface IUser{
     username: string,
     email: string,
     password: string,
-    user_type:string,
+    user_roles:string,
 }

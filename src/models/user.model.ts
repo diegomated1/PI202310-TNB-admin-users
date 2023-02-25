@@ -14,7 +14,13 @@ export default db.define('users', {
     username: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    user_type:DataTypes.STRING,
+    user_roles:{
+      type:DataTypes.STRING,
+      references:{
+        model:'roles',
+        key:'id_roles'
+      }
+    }
 }, {
     freezeTableName: true,
     timestamps: false
