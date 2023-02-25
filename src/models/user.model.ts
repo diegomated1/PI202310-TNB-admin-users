@@ -13,7 +13,8 @@ export default db.define('users', {
       type: DataTypes.STRING},
     username: DataTypes.STRING,
     email: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    user_type:DataTypes.STRING,
 }, {
     freezeTableName: true,
     timestamps: false
