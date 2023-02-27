@@ -60,8 +60,36 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+
+
+
+const modifyUsersById = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const params = req.params;
+        const body = req.body;
+        const user = await userModel.findByPk(params.id_user);
+        if (user == null) {
+            res.status(404).json({ info: 'usuario no existe' })
+        } else {
+            let body = req.body;
+            await user.update({
+                email: body.email,
+                password : body.password,
+                username : body.username,
+                
+            });
+            res.status(200).json({status:true, info: 'Se actualizo el usuario con exito'})
+        }
+    }catch(error){
+        console.log(error)
+        res.status(500).json({ status: false, info: 'no se actualizo el usuario' });
+    }
+    
+}
+
 export default {
     auth,
     getById,
-    login
+    login,
+    modifyUsersById,
 }

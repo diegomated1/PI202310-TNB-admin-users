@@ -14,7 +14,7 @@ export default db.define('users', {
     username: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    user_roles:{
+    id_roles:{
       type:DataTypes.STRING,
       references:{
         model:'roles',
