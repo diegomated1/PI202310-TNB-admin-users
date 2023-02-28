@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import userModel from "../models/user.model.js";
-import bc from 'bcrypt';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-
 
 const getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -16,52 +13,8 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
     } catch (error) {
         console.log((error as Error).message);
         res.status(500).json({ status: false, message: 'Server internal error' });
-}
-}
-
-const login = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const {email, password} = req.body;
-        const _user = await userModel.findOne({where: {email}});
-        if (_user === null) return res.json({ 'error': 2, 'message': 'Correo no registrado' });
-        const _password = await bc.compare(password, _user.password);
-        if (!_password) return res.json({ 'error': 3, 'message': 'Contraseña incorrecta' });
-        else {
-            var token = jwt.sign({ id_user: _user.id_user }, process.env.JWT_SECRET!, { expiresIn :"15m"});
-            console.log(token);
-            res.cookie("token",token,{
-                httpOnly:true,
-            })
-            return res.status(200).json({ 'error': 0, 'message': "Bienvenido" });
-        }
-    } catch (error) {
-        console.log((error as Error).message);
-        res.status(500).json({ 'error': 1, message: 'Server internal error' });
     }
 }
-
-const auth = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const token = req.cookies.token;
-        try{
-            var decode = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-        }catch(err){
-            return res.status(401).json({'error': 1, message: 'Invalid token'});
-        }
-        const user = await userModel.findByPk(decode.id_user);
-        if(user){
-            res.status(200).json({'error': 0, data: user});
-        }else{
-            return res.status(401).json({'error': 1, message: 'Invalid token'});
-        }
-    } catch (error) {
-        console.log((error as Error).message);
-        res.status(500).json({ 'error': 2, message: 'Server internal error' });
-    }
-}
-
-
-
 
 const modifyUsersById = async (req: Request, res: Response, next: NextFunction) => {
     try{
@@ -71,12 +24,10 @@ const modifyUsersById = async (req: Request, res: Response, next: NextFunction) 
         if (user == null) {
             res.status(404).json({ info: 'usuario no existe' })
         } else {
-            let body = req.body;
             await user.update({
                 email: body.email,
                 password : body.password,
                 username : body.username,
-                
             });
             res.status(200).json({status:true, info: 'Se actualizo el usuario con exito'})
         }
@@ -88,8 +39,6 @@ const modifyUsersById = async (req: Request, res: Response, next: NextFunction) 
 }
 
 export default {
-    auth,
     getById,
-    login,
-    modifyUsersById,
+    modifyUsersById
 }
