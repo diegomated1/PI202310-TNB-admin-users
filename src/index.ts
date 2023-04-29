@@ -20,7 +20,7 @@ class Server{
 
     private config(){
         this.app.use(cors({
-            origin: process.env.CLIENT_HOST! || '*',
+            origin: process.env.CLIENT_HOST! || true,
             credentials: true
         }));
         this.app.use(express.json());

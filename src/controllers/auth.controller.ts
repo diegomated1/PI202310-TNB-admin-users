@@ -6,16 +6,18 @@ import ui from 'uniqid';
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {username, email, password} = req.body;
-        const _user = await userModel.findOne({where: {email}});
-        if (_user) return res.json({ 'error': 2, 'message': 'Correo ya registrado' });
+        const {username, name, second_name, email, password} = req.body;
+        const user_email = await userModel.findOne({where: {email}});
+        if (user_email) return res.json({ 'error': 2, 'message': 'Correo ya registrado' });
+        const user_username = await userModel.findOne({where: {username}});
+        if (user_username) return res.json({ 'error': 2, 'message': 'Usuario ya registrado' });
 
-        const id_user = ui.time();
+        const id_user = ui.process();
+        const _password = await bc.hash(password, 10);
         await userModel.create({
-            id_user,
-            username: username,
-            email: email,
-            password: await bc.hash(password, 10),
+            id_user, 
+            username, name, second_name, 
+            email, password: _password,
             id_roles: 4
         });
 
@@ -25,7 +27,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         })
         return res.status(200).json({ 'error': 0, 'message': "Registrado" });
     } catch (error) {
-        console.log((error as Error).message);
         res.status(500).json({ 'error': 1, message: 'Server internal error' });
     }
 }
@@ -39,14 +40,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         if (!_password) return res.json({ 'error': 3, 'message': 'Contraseña incorrecta' });
         else {
             var token = jwt.sign({ id_user: _user.id_user }, process.env.JWT_SECRET!, { expiresIn :"24h"});
-            console.log(token);
             res.cookie("token",token,{
-                httpOnly:true,
+                httpOnly:true
             })
             return res.status(200).json({ 'error': 0, 'message': "Logeado" });
         }
     } catch (error) {
-        console.log((error as Error).message);
         res.status(500).json({ 'error': 1, message: 'Server internal error' });
     }
 }
@@ -63,10 +62,9 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         if(user){
             res.status(200).json({'error': 0, data: user});
         }else{
-            return res.status(401).json({'error': 1, message: 'Invalid token'});
+            return res.status(404).json({'error': 1, message: 'User not found'});
         }
     } catch (error) {
-        console.log((error as Error).message);
         res.status(500).json({ 'error': 2, message: 'Server internal error' });
     }
 }

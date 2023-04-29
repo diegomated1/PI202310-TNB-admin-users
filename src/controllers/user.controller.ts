@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from "express";
+import IUser from "interfaces/IUser.js";
 import userModel from "../models/user.model.js";
 
 const getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id_user } = req.params;
-        const user = await userModel.findByPk(id_user);
+        const user = await userModel.findByPk(id_user, {
+            attributes: {exclude: ['password']}
+        });
         if (user) {
             res.status(200).json({ status: true, data: user });
         } else {

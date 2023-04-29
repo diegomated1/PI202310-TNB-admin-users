@@ -12,6 +12,8 @@ export default db.define('users', {
       primaryKey: true,
       type: DataTypes.STRING},
     username: DataTypes.STRING,
+    name: DataTypes.STRING,
+    second_name: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     id_roles:{
