@@ -27,6 +27,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         })
         return res.status(200).json({ 'error': 0, 'message': "Registrado" });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ 'error': 1, message: 'Server internal error' });
     }
 }
@@ -58,7 +59,9 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         }catch(err){
             return res.status(401).json({'error': 1, message: 'Invalid token'});
         }
-        const user = await userModel.findByPk(decode.id_user);
+        const user = await userModel.findByPk(decode.id_user, {
+            attributes: {exclude: ['password']}
+        });
         if(user){
             res.status(200).json({'error': 0, data: user});
         }else{

@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import IUser from "interfaces/IUser.js";
 import userModel from "../models/user.model.js";
+import questionsModel from "models/questions.model.js";
+import ui from 'uniqid';
+import bc from 'bcrypt';
 
 const getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -41,7 +43,76 @@ const modifyUsersById = async (req: Request, res: Response, next: NextFunction) 
     
 }
 
+const addQuestion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id_user } = req.params;
+        const {ask, answer} = req.body;
+        const user = await userModel.findByPk(id_user);
+        if (!user) {
+            return res.status(404).json({ status: true, message: 'User not found' });
+        }
+
+        await questionsModel.create({id_user, ask, answer});
+
+        res.status(200).json({ status: true, message: 'Ask question' });
+    } catch (error) {
+        console.log((error as Error).message);
+        res.status(500).json({ status: false, message: 'Server internal error' });
+    }
+} 
+
+const getQuestions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id_user } = req.params;
+        
+        const questions = await questionsModel.findAll({
+            where: { id_user },
+            attributes: {
+                exclude: ['answer']
+            }
+        });
+
+        res.status(200).json({ status: true, data: questions });
+    } catch (error) {
+        console.log((error as Error).message);
+        res.status(500).json({ status: false, message: 'Server internal error' });
+    }
+} 
+
+const checkQuestion = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id_user, id_question } = req.params;
+        const { answer } = req.body;
+
+        const user = await userModel.findByPk(id_user);
+        if (!user) {
+            return res.status(404).json({ status: true, message: 'User not found' });
+        }
+
+        const question = await questionsModel.findOne({
+            where: { id_user, id_question }
+        });
+
+        if(question?.answer==answer){
+            const new_password = ui();
+            user.password = await bc.hash(new_password, 10);
+            await user.save();
+            res.status(200).json({ status: true, new_password });
+        }else{
+            res.status(200).json({ status: true, message: 'Invalid answer' });
+        }
+
+
+    } catch (error) {
+        console.log((error as Error).message);
+        res.status(500).json({ status: false, message: 'Server internal error' });
+    }
+} 
+
 export default {
     getById,
-    modifyUsersById
+    modifyUsersById,
+    addQuestion, 
+    getQuestions,
+    checkQuestion
 }

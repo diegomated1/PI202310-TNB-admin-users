@@ -1,4 +1,6 @@
 export default interface IQuestions{
-    ask: string,
+    id_question?: number
+    id_user: string
+    ask: string
     answer: string
 }

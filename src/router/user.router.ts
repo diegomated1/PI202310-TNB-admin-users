@@ -17,6 +17,10 @@ class UserRouter {
 
         this.router.route('/user/:id_user').get(userController.getById);
         this.router.route('/user/:id_user').put(userController.modifyUsersById);
+
+        this.router.route('/user/:id_user/questions').get(userController.getQuestions);
+        this.router.route('/user/:id_user/questions').post(userController.addQuestion);
+        this.router.route('/user/:id_user/questions/:id_question').post(userController.checkQuestion);
     }
 }
 

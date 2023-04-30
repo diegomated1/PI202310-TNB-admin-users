@@ -31,7 +31,7 @@ class Server{
 
     private routes(){
         //this.app.use(informesRouter.router);
-        this.app.use(userRouter.router);
+        this.app.use('/users', userRouter.router);
     }
 
     private start(){
