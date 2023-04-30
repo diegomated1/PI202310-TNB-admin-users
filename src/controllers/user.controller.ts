@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import userModel from "../models/user.model.js";
-import questionsModel from "models/questions.model.js";
+import questionsModel from "../models/questions.model.js";
 import ui from 'uniqid';
 import bc from 'bcrypt';
 
@@ -71,10 +71,10 @@ const getQuestions = async (req: Request, res: Response, next: NextFunction) => 
                 exclude: ['answer']
             }
         });
-
+        
         res.status(200).json({ status: true, data: questions });
     } catch (error) {
-        console.log((error as Error).message);
+        console.log(error);
         res.status(500).json({ status: false, message: 'Server internal error' });
     }
 } 

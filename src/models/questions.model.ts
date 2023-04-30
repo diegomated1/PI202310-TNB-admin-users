@@ -1,6 +1,6 @@
 import {Model, DataTypes, BuildOptions} from 'sequelize';
 import db from '../database/database.js';
-import IQuestions from 'interfaces/IQuetions.js';
+import IQuestions from '../interfaces/IQuetions.js';
 import userModel from './user.model.js';
 
 interface QuestionsInstance extends Model<IQuestions>, IQuestions {}
@@ -9,7 +9,11 @@ type QuestionsModelStatic = typeof Model & {
 };
 
 const questionsModel = db.define('questions', {
-    id_question: DataTypes.STRING,
+    id_question: {
+        type: DataTypes.NUMBER,
+        autoIncrement: true,
+        primaryKey: true
+    },
     id_user: DataTypes.STRING,
     ask: DataTypes.STRING,
     answer: DataTypes.STRING,
