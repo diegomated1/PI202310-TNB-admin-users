@@ -21,8 +21,9 @@ create table users(
 create table questions(
 	id_question int primary key auto_increment not null,
     id_user varchar(30) not null,
-    ask text,
-    answer text
+    ask text not null,
+    answer text not null,
+    foreign key (id_user) references users(id_user)
 );
 
 insert into roles(roles_name,description) values ('Administrador_general','puede hacer todas las funciones');
