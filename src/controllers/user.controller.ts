@@ -29,11 +29,30 @@ const modifyUsersById = async (req: Request, res: Response, next: NextFunction) 
         if (user == null) {
             res.status(404).json({ info: 'usuario no existe' })
         } else {
-            await user.update({
-                email: body.email,
-                password : body.password,
-                username : body.username,
-            });
+            user.name = body.name || user.name;
+            user.second_name = body.second_name || user.second_name;
+            user.email = body.email || user.email;
+            if(body.username){
+                const _user = await userModel.findOne({where: {username: body.username}});
+                if(_user){
+                    return res.status(400).json({status:true, message: 'Username already taken'});
+                }else{
+                    user.username = body.username;
+                }
+            }
+            if(body.email){
+                const _user = await userModel.findOne({where: {email: body.email}});
+                if(_user){
+                    return res.status(400).json({status:true, message: 'Email already taken'});
+                }else{
+                    user.email = body.email;
+                }
+            }
+            if(body.password){
+                user.password = await bc.hash(body.password, 10);
+            }
+            user.username = body.username || user.username;
+            await user.save();
             res.status(200).json({status:true, info: 'Se actualizo el usuario con exito'})
         }
     }catch(error){
